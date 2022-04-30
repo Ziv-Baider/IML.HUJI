@@ -140,12 +140,12 @@ class MultivariateGaussian:
             Initialized as false indicating current estimator instance has not been fitted.
             To be set as True in `MultivariateGaussian.fit` function.
 
-        mu_: float
-            Estimated expectation initialized as None. To be set in `MultivariateGaussian.ft`
+        mu_: ndarray of shape (n_features,)
+            Estimated expectation initialized as None. To be set in `MultivariateGaussian.fit`
             function.
 
-        cov_: float
-            Estimated covariance initialized as None. To be set in `MultivariateGaussian.ft`
+        cov_: ndarray of shape (n_features, n_features)
+            Estimated covariance initialized as None. To be set in `MultivariateGaussian.fit`
             function.
         """
         self.mu_, self.cov_ = None, None
@@ -158,11 +158,12 @@ class MultivariateGaussian:
         Parameters
         ----------
         X: ndarray of shape (n_samples, n_features )
+        X: ndarray of shape (n_samples, n_features)
             Training data
 
         Returns
         -------
-        self : returns an instance of self.
+        self : returns an instance of self
 
         Notes
         -----
@@ -183,6 +184,7 @@ class MultivariateGaussian:
         Parameters
         ----------
         X: ndarray of shape (n_samples, n_features )
+        X: ndarray of shape (n_samples, n_features)
             Samples to calculate PDF for
 
         Returns
@@ -213,17 +215,17 @@ class MultivariateGaussian:
 
         Parameters
         ----------
-        mu : np.ndarray
+        mu : ndarray of shape (n_features,)
             Expectation of Gaussian
-        cov : (np.ndarray, np.ndarray)
+        cov : ndarray of shape (n_features, n_features)
             covariance matrix of Gaussian
-        X : ndarray of shape (n_samples, )
+        X : ndarray of shape (n_samples, n_features)
             Samples to calculate log-likelihood with
 
         Returns
         -------
         log_likelihood: float
-            log-likelihood calculated
+            log-likelihood calculated over all input data and under given parameters of Gaussian
         """
         d = np.shape(X)[0]  # number of features
         m = np.shape(X)[1]  # number of samples

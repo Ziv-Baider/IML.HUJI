@@ -1,18 +1,9 @@
-import matplotlib.pyplot as plt
-
 from IMLearn.learners.classifiers import Perceptron, LDA, GaussianNaiveBayes
-import numpy as np
 from typing import Tuple
+from utils import *
 import plotly.graph_objects as go
-import plotly.io as pio
-import plotly.express as px
 from plotly.subplots import make_subplots
-import pandas as pd
-from IMLearn.metrics import accuracy
-
 from math import atan2, pi
-
-pio.templates.default = "simple_white"
 
 
 def load_dataset(filename: str) -> Tuple[np.ndarray, np.ndarray]:
