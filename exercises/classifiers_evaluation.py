@@ -4,6 +4,7 @@ from utils import *
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from math import atan2, pi
+from IMLearn.metrics.loss_functions import accuracy
 
 
 def load_dataset(filename: str) -> Tuple[np.ndarray, np.ndarray]:
