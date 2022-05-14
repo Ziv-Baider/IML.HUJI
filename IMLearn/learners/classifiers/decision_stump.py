@@ -54,13 +54,6 @@ class DecisionStump(BaseEstimator):
                 self.j_ = j
                 self.sign_ = sign
 
-        # loss_star, theta_star = np.inf, np.inf
-        # for sign, j in product([-1, 1], range(X.shape[1])):
-        #     loss, theta = self._find_threshold(X[:, j], y, sign)
-        #     if loss < loss_star:
-        #         self.sign_, self.threshold_, self.j_ = sign, theta, j
-        #         loss_star = loss
-
     def _predict(self, X: np.ndarray) -> np.ndarray:
         """
         Predict responses for given samples using fitted estimator
@@ -117,55 +110,27 @@ class DecisionStump(BaseEstimator):
         For every tested threshold, values strictly below threshold are predicted as `-sign` whereas values
         which equal to or above the threshold are predicted as `sign`
         """
+        # Sort the values and labels for efficiency
+        sorted_indexes = np.argsort(values)
+        sorted_values = values[sorted_indexes]
+        sorted_labels = np.sign(labels[sorted_indexes])
 
-        # loss = len(values)  # assume that misclassified all samples
-        # loss = np.inf  # assume that misclassified all samples
-        # thresh = X[0]
-        #
-        # misclassified_indexes = np.argwhere(np.sign(labels) != sign)
-        # F = np.sum(
-        #     np.abs(labels[misclassified_indexes]))
-        # for best_ind in range(len(X)):
-        #     F += y[best_ind] * sign  # inc/decrement
-        #     if F < loss:
-        #         thresh = X[best_ind]
-        #         loss = F
-        # return thresh, loss
-
-        # sort_idx = np.argsort(X[:, j])
-        # X, y, D = X[sort_idx], y[sort_idx], D[sort_idx]
-
-        # thr_err = 1
-        # threshold = values[0]
-        # for curthreshold in values:
-        #     temp_arr = sign * np.sign(labels)
-        #     label_sign = np.sign(labels)
-        #     err_arr = np.abs(labels[label_sign != temp_arr])
-        #     error_sum = np.sum(np.abs(labels))
-        #     if thr_err >= error_sum:
-        #         thr_err = error_sum
-        #         threshold = curthreshold
-        # return threshold, thr_err
-
-        sorted_indeces = np.argsort(values)
-        sorted_values = values[sorted_indeces]
-        sorted_labels = np.sign(labels[sorted_indeces])
-
+        # Initiate D
         D = np.abs(labels)
         D /= np.sum(D)
-        sorted_D = D[sorted_indeces]
+        sorted_D = D[sorted_indexes]
 
+        # Initiate Threshold
         thresholds = np.concatenate(
             [[-np.inf], (sorted_values[1:] + sorted_values[:-1]) / 2, [np.inf]])
+        # find losses
         min_thr_loss = np.sum(sorted_D[sorted_labels == sign])
         thresholds_losses = np.append(min_thr_loss, min_thr_loss - np.cumsum(
-            sorted_D *sorted_labels * sign))
+            sorted_D * sorted_labels * sign))
+        # fins min index for min loss and threshold
         min_loss_idx = np.argmin(thresholds_losses)
         thr, thr_err = thresholds[min_loss_idx], thresholds_losses[min_loss_idx]
         return thr, thr_err
-
-
-
 
     def _loss(self, X: np.ndarray, y: np.ndarray) -> float:
         """
@@ -184,9 +149,4 @@ class DecisionStump(BaseEstimator):
         loss : float
             Performance under missclassification loss function
         """
-        n_samples = len(X)
-        y_pred = self.predict(X)
-        pred_err = np.argwhere(np.sign(y) != y_pred)
-        loss = np.sum(np.abs(y[pred_err]))
-        # return loss
         return misclassification_error(y, self._predict(X))
