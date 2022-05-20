@@ -123,7 +123,7 @@ class DecisionStump(BaseEstimator):
         # Initiate Threshold
         thresholds = np.concatenate(
             [[-np.inf], (sorted_values[1:] + sorted_values[:-1]) / 2, [np.inf]])
-        # find losses
+        # find the losses
         min_thr_loss = np.sum(sorted_D[sorted_labels == sign])
         thresholds_losses = np.append(min_thr_loss, min_thr_loss - np.cumsum(
             sorted_D * sorted_labels * sign))
